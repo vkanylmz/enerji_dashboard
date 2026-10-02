@@ -1,0 +1,155 @@
+sirket,santral_adi,durum,adaylar
+A1YEN,Adala Ges,bulunamadi,
+A1YEN,Attalos GES,bulunamadi,
+A1YEN,Dombaylı GES,bulunamadi,
+A1YEN,Esenyazı GES,bulunamadi,
+A1YEN,Başıbüyük GES,bulunamadi,
+A1YEN,Çorbacılar GES,bulunamadi,
+A1YEN,İmamdamı 1 GES,bulunamadi,
+A1YEN,İmamdamı 2 GES,bulunamadi,
+A1YEN,Ağzıkarahan GES,bulunamadi,
+A1YEN,Alanya GES,bulunamadi,
+A1YEN,Çubuk GES,bulunamadi,
+A1YEN,Yunak GES,bulunamadi,
+AKENR,Burç Bendi HES,olasi (yakin eslesme),BurcBendi HES
+AKENR,Erzin DGKÇS,bulunamadi,
+AKENR,Uluabat HES,bulunamadi,
+AKENR,Ayyıldız RES,bulunamadi,
+AKFYE,Çamlıca III HES,belirsiz (birden fazla aday),ÇAMLICA II HES | ÇAMLICA 1 HES | ÇAMLICA HES(HİDROGÜÇ ENR.)
+AKFYE,Otluca HES,belirsiz (birden fazla aday),OTLUCA HES(BEYOBASI ENR.) | OTLUCA HES | OTLUCA HES(NAS ENR.)
+AKFYE,Sırma HES,olasi (yakin eslesme),Irmak HES | SIRIMTAŞ HES | Sema HES
+AKFYE,Doğançay HES,olasi (yakin eslesme),DOĞANKAYA HES(MAR-EN ENR.)
+AKFYE,Saraçbendi HES,bulunamadi,
+AKFYE,Kavakçalı HES,bulunamadi,
+AKFYE,Sekiyaka HES,bulunamadi,
+AKFYE,Fırıncı GES,bulunamadi,
+AKFYE,Denizli GES,bulunamadi,
+AKFYE,Karine GES,bulunamadi,
+AKFYE,Amasya (Boyalı) GES,bulunamadi,
+AKFYE,Tokat (Kuşoturağı GES,bulunamadi,
+AKFYE,Sarıtepe Hibrit GES,bulunamadi,
+AKFYE,Denizli Hibrit GES,bulunamadi,
+AKFYE,Hasanoba Hibrit GES,bulunamadi,
+AKFYE,Kocalar Hibrit GES,bulunamadi,
+AKFYE,Üçpınar Hibrit GES,bulunamadi,
+AKFYE,Demirciler Hibrit GES,bulunamadi,
+AKSEN,Aksa Enerji Doğalgaz,bulunamadi,
+AKSEN,Aksa Göynük Termik,bulunamadi,
+AKSEN,Aksa Enerji Fuel Oil,bulunamadi,
+AKSEN,Aksa Gana Fuel Oil,bulunamadi,
+AKSEN,Aksa Mali Fuel Oil,bulunamadi,
+AKSEN,Aksa Energy Buhara Doğalgaz,bulunamadi,
+AKSEN,Aksa Energy Tashkent Doğalgaz,bulunamadi,
+AKSEN,Aksa Energy Talimarjan Doğalgaz,bulunamadi,
+AKSEN,Aksa Energy Congo Doğalgaz,bulunamadi,
+AYDEM,Akıncı HES,belirsiz (birden fazla aday),AKINCI HES | AKINCI (KAYABEYİ) HES | AKINCI HES(OLCA)
+AYDEM,Kızıldere JES,belirsiz (birden fazla aday),KIZILDERE JES-2 | KIZILDERE JES-3
+AYDEM,Aksu HES,olasi (yakin eslesme),GÖKSU HES | AKBAŞ HES
+AYDEM,Çırakdamı HES,bulunamadi,
+AYDEM,Armutlu RES,bulunamadi,
+AYDEM,Banaz RES,bulunamadi,
+AYDEM,Banaz RES Hibrit GES,bulunamadi,
+AYEN,Akbük 1 RES,belirsiz (birden fazla aday),AKBÜK RES(AYEN ENR.) | AKBÜK RES(SUAY ENR.) | AKBÜK II RES
+AYEN,Akbük 2 RES,belirsiz (birden fazla aday),AKBÜK RES(AYEN ENR.) | AKBÜK RES(SUAY ENR.) | AKBÜK II RES
+AYEN,Mordoğan RES,belirsiz (birden fazla aday),MORDOĞAN RES(AYEN ENR.) | MORDOĞAN RES(EGENDA EGE ENR.)
+AYEN,Çaypınar RES,olasi (yakin eslesme),ÜÇPINAR RES
+BIGEN,Edikli GES,bulunamadi,
+BIGEN,Gülbahar Bitlis GES,bulunamadi,
+BIGEN,Uluder Kahramanmaraş GES,bulunamadi,
+BIGEN,Gülbahar Ankara GES,bulunamadi,
+BIGEN,Gülbahar Antalya GES,bulunamadi,
+BIGEN,Gülbahar Antalya 2 GES,bulunamadi,
+BIGEN,Menekşe RES,bulunamadi,
+BIGEN,Uluder Kahramanmaraş 2 GES,bulunamadi,
+BIGEN,Zen Burdur GES,bulunamadi,
+BIGEN,Zen Eskişehir GES,bulunamadi,
+BIGEN,Zen Kırıkkale GES,bulunamadi,
+BIGEN,Zen Kütahya GES,bulunamadi,
+BIGEN,Zen Isparta GES,bulunamadi,
+BIGEN,Zen Uşak GES,bulunamadi,
+BIOEN,İnegöl Çöp Gazı BES,bulunamadi,
+BIOEN,İnegöl Biyogaz BES,bulunamadi,
+BIOEN,Balıkesir Çöp Gazı GES,bulunamadi,
+BIOEN,Ezine Biyokütle BES,bulunamadi,
+BIOEN,Harmandalı Çöp Gazı BES,bulunamadi,
+BIOEN,Bergama Çöp Gazı BES,bulunamadi,
+BIOEN,Menderes Biyogaz BES,bulunamadi,
+BIOEN,Çine Biyokütle BES,bulunamadi,
+BIOEN,Uşak Biyogaz BES,bulunamadi,
+BIOEN,Sivas Çöp Gazı BES,bulunamadi,
+BIOEN,Orduzu Çöp Gazı BES,bulunamadi,
+BIOEN,Malatya Çöp Gazı BES,bulunamadi,
+BIOEN,Malatya 2 Çöp Gazı BES,bulunamadi,
+BIOEN,İskenderun Çöp Gazı BES,bulunamadi,
+CANTE,Çan2 Termik Santrali,olasi (yakin eslesme),Çumra Termik Santrali | SOMA TERMİK SANTRALİ | KANGAL TERMİK SANTRAL
+CATES,Çatalağzı Termik Santrali,bulunamadi,
+CONSE,Mavibayrak Doğu BES,olasi (yakin eslesme),MAVİ BAYRAK DOĞU BES
+CONSE,Mavibayrak Enerji BES,bulunamadi,
+CONSE,Ra Güneş GES,bulunamadi,
+CONSE,Dağıtık Enerji,bulunamadi,
+ECOGR,YEKA GES-4 Bor 2,bulunamadi,
+ECOGR,Tire GES,bulunamadi,
+ECOGR,Seydikemer GES,bulunamadi,
+ECOGR,Yatağan GES,bulunamadi,
+ECOGR,Karahıdır GES,bulunamadi,
+ECOGR,Karatay GES,bulunamadi,
+ECOGR,Sarayköy GES,bulunamadi,
+ECOGR,Ecofer Biyogaz,bulunamadi,
+ECOGR,Karacabey Biyogaz,bulunamadi,
+ECOGR,Denizli Biyogaz,bulunamadi,
+ECOGR,Honaz Biyokütle,bulunamadi,
+ENDAE,Eğlence I HES,belirsiz (birden fazla aday),Eğlence 2 HES | Eğlence 1 HES
+ENDAE,Eğlence II HES,belirsiz (birden fazla aday),Eğlence 2 HES | Eğlence 1 HES
+ENDAE,Alaçatı RES,belirsiz (birden fazla aday),ALAÇATI RES(EGENDA EGE ENR.) | ALAÇATI RES(EÜAŞ)
+ENDAE,Mordoğan RES,belirsiz (birden fazla aday),MORDOĞAN RES(AYEN ENR.) | MORDOĞAN RES(EGENDA EGE ENR.)
+ENDAE,Soma GES,olasi (yakin eslesme),SOMA(A) TES
+ENDAE,Kemalpaşa GES,bulunamadi,
+ENDAE,Ödemiş GES,bulunamadi,
+ENTRA,Kadıncık 2 HES,belirsiz (birden fazla aday),KADINCIK 2 HES | KADINCIK 2 HES | KADINCIK 2 HES
+ENTRA,Niksar HES,belirsiz (birden fazla aday),NİKSAR HES | NİKSAR HES
+ENTRA,Üçharmanlar HES,belirsiz (birden fazla aday),ÜÇHARMANLAR HES | ÜÇHARMANLAR HES
+ENTRA,Yukarı Mercan HES,belirsiz (birden fazla aday),Yukarı Mercan HES | YUKARI MERCAN HES
+ENTRA,Çileklitepe HES,bulunamadi,
+ENTRA,Erzin GES,bulunamadi,
+GWIND,Taşpınar RES,olasi (yakin eslesme),TATLIPINAR RES
+GWIND,Şah RES,bulunamadi,
+GWIND,Mersin RES,bulunamadi,
+GWIND,Erzurum GES,bulunamadi,
+GWIND,Çorum GES,bulunamadi,
+GWIND,Taşpınar Hibrit GES,bulunamadi,
+IZENR,Aliağa Termik Santrali,olasi (yakin eslesme),KANGAL TERMİK SANTRAL
+IZENR,Salihli GES 1,bulunamadi,
+IZENR,Salihli GES 2,bulunamadi,
+IZENR,Salihli GES 3,bulunamadi,
+LYDYE,Yörük 1 GES,bulunamadi,
+LYDYE,Yörük 2 GES,bulunamadi,
+LYDYE,Yörük 3 GES,bulunamadi,
+LYDYE,Yörük 4 GES,bulunamadi,
+LYDYE,Yörük 5 GES,bulunamadi,
+MOGAN,Efe 8 JES,olasi (yakin eslesme),EFE-7 JES | EFE-6 JES
+MOGAN,Çeşmebaşı REG ve HES,olasi (yakin eslesme),DEREBAŞI REG. ve HES | ÇEŞMEBAŞI REGÜLATÖRÜ VE HES
+MOGAN,Arpa HES,olasi (yakin eslesme),SARAY HES | DARCA HES | DARAN HES
+MOGAN,"Efeler JES( Efe 1,2,3,4)",bulunamadi,
+MOGAN,Belen RES,bulunamadi,
+MOGAN,Albay Çiğiltepe RES,bulunamadi,
+MOGAN,Ulu RES,bulunamadi,
+MOGAN,Kocatepe RES Yardımcı Kaynak GES,bulunamadi,
+MOGAN,GMB RENEWABLE ENERG GES,bulunamadi,
+PAMEL,Şifrin HES,bulunamadi,
+PAMEL,Bala GES,bulunamadi,
+TATEN,Esenköy RES,olasi (yakin eslesme),ŞENKÖY RES
+TATEN,Tatlıpınar GES,bulunamadi,
+TATEN,Umutlu GES,bulunamadi,
+ZEDUR,Kocadere GES 1-6,bulunamadi,
+ZEDUR,Çenger GES 1-6,bulunamadi,
+ZEDUR,Nif GES 1-3,bulunamadi,
+ZEDUR,Çukurçayı Narlı HES,bulunamadi,
+ZOREN,Kızıldere 1 JES,belirsiz (birden fazla aday),KIZILDERE JES-2 | KIZILDERE JES-3
+ZOREN,Kızıldere 2 JES,belirsiz (birden fazla aday),KIZILDERE JES-2 | KIZILDERE JES-3
+ZOREN,Kızıldere 3 JES,belirsiz (birden fazla aday),KIZILDERE JES-2 | KIZILDERE JES-3
+ZOREN,Kuzgun HES,belirsiz (birden fazla aday),KUZGUN HES | KUZGUN HES
+ZOREN,Ataköy HES,belirsiz (birden fazla aday),ATAKÖY HES(ZORLU DOĞAL ELK.) | ATAKÖY HES(ÇAMLIKAYA ENR.)
+ZOREN,Beyköy HES,bulunamadi,
+ZOREN,Lüleburgaz Doğalgaz,bulunamadi,
+ZOREN,Jhimpir RES,bulunamadi,
+ZOREN,Deadsea GES,bulunamadi,

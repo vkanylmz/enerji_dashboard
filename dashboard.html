@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enerji Sektörü Panosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0A0F1A;
+    --panel:#111827;
+    --panel-2:#161F32;
+    --line:#233047;
+    --ink:#E7ECF6;
+    --ink-dim:#8C9BB5;
+    --gain:#2FD897;
+    --gain-dim:#1B4A3C;
+    --loss:#FF6B6B;
+    --loss-dim:#4A2226;
+    --amber:#E8B94F;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, #142038 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #1E1808 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    padding:32px 24px 80px;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1180px; margin:0 auto;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  /* HEADER */
+  header{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:20px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:22px; margin-bottom:22px;
+  }
+  .brand{display:flex; align-items:center; gap:16px; cursor:pointer;}
+  .logo-chip{
+    width:44px; height:44px; border-radius:10px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--amber), var(--gain));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:17px; color:#141008;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; letter-spacing:2.5px; text-transform:uppercase;
+    color:var(--amber); margin-bottom:8px;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:30px; letter-spacing:-0.5px; line-height:1.15;
+  }
+  h1 span{color:var(--ink-dim); font-weight:500;}
+  .stamp{
+    text-align:right; font-family:'IBM Plex Mono', monospace;
+    font-size:12px; color:var(--ink-dim); line-height:1.6;
+  }
+  .stamp b{color:var(--ink); font-weight:600;}
+  .stamp .dot{
+    display:inline-block; width:7px; height:7px; border-radius:50%;
+    background:var(--gain); margin-right:6px;
+    box-shadow:0 0 0 3px var(--gain-dim);
+  }
+
+  /* BREADCRUMB */
+  .breadcrumb{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px; color:var(--ink-dim); margin-bottom:24px;
+  }
+  .breadcrumb a{color:var(--amber); text-decoration:none; cursor:pointer;}
+  .breadcrumb a:hover{text-decoration:underline;}
+  .breadcrumb .sep{color:var(--line);}
+  .breadcrumb .current{color:var(--ink); font-weight:600;}
+
+  /* METHOD NOTE */
+  .method{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:3px solid var(--amber);
+    border-radius:6px;
+    padding:14px 18px;
+    margin-bottom:26px;
+    font-size:13px; line-height:1.6; color:var(--ink-dim);
+  }
+  .method b{color:var(--ink); font-weight:600;}
+
+  /* TABS */
+  .tabs{
+    display:flex; gap:6px; margin-bottom:16px;
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:8px; padding:5px; width:fit-content;
+  }
+  .tab{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13.5px;
+    padding:8px 18px; border-radius:5px; cursor:pointer;
+    color:var(--ink-dim); transition:all .15s ease; user-select:none;
+  }
+  .tab.active{background:var(--amber); color:#1A1204;}
+  .tab:not(.active):hover{color:var(--ink); background:var(--panel-2);}
+
+  /* KPI / OVERVIEW CARDS */
+  .kpi-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px;
+  }
+  @media(max-width:820px){ .kpi-grid{grid-template-columns:repeat(2,1fr);} }
+  .kpi{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:16px 18px;
+  }
+  .kpi-label{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px;
+    color:var(--ink-dim); margin-bottom:10px;
+  }
+  .kpi-value{font-family:'IBM Plex Mono', monospace; font-size:23px; font-weight:600;}
+  .kpi-value .unit{font-size:12.5px; color:var(--ink-dim); font-weight:400; margin-left:4px;}
+  .kpi-bar{background:var(--panel-2); border-radius:4px; height:6px; margin-top:12px; overflow:hidden;}
+  .kpi-bar i{display:block; height:100%; border-radius:4px; background:linear-gradient(90deg, var(--gain-dim), var(--gain));}
+
+  /* PANEL / COL */
+  .panel-row{display:grid; grid-template-columns:1.4fr 1fr; gap:14px; margin-bottom:14px;}
+  @media(max-width:820px){ .panel-row{grid-template-columns:1fr;} }
+  .col{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:16px 18px 8px;
+  }
+  .col-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-bottom:14px;
+  }
+  .col-head h2{font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:600;}
+  .col-head .desc{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-dim);
+  }
+  .chart-box{position:relative; height:250px;}
+  .chart-box.small{height:190px;}
+
+  .section-head{
+    display:flex; align-items:center; gap:12px; margin:34px 0 14px;
+  }
+  .section-head h2{font-family:'Space Grotesk', sans-serif; font-size:19px; font-weight:600;}
+  .section-head .rule{flex:1; height:1px; background:var(--line);}
+
+  /* FILTERS / SEARCH */
+  .filters{
+    display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; align-items:center;
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:8px; padding:5px; width:fit-content;
+  }
+  .filter-btn{
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:12px;
+    padding:7px 15px; border-radius:5px; cursor:pointer;
+    color:var(--ink-dim); transition:all .15s ease; user-select:none;
+  }
+  .filter-btn.active{background:var(--amber); color:#1A1204;}
+  .filter-btn:not(.active):hover{color:var(--ink); background:var(--panel-2);}
+  .filter-sep{width:1px; align-self:stretch; background:var(--line); margin:2px 4px;}
+
+  .toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    gap:14px; margin-bottom:14px; flex-wrap:wrap;
+  }
+  .search-box{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:8px 14px; color:var(--ink); font-family:'IBM Plex Mono', monospace;
+    font-size:13px; width:220px; outline:none;
+  }
+  .search-box::placeholder{color:var(--ink-dim);}
+  .search-box:focus{border-color:var(--amber);}
+  .count-note{font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--ink-dim);}
+
+  /* RANKED ROW LIST (company list) */
+  .list-panel{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 18px;}
+  .row{
+    display:grid; grid-template-columns:90px 1fr 110px; align-items:center;
+    gap:14px; padding:10px 0; border-bottom:1px solid #1A2438; cursor:pointer;
+    transition:background .12s ease;
+  }
+  .row:last-child{border-bottom:none;}
+  .row:hover{background:var(--panel-2); margin:0 -18px; padding:10px 18px; border-radius:6px;}
+  .ticker{font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:13px;}
+  .barwrap{background:var(--panel-2); border-radius:4px; height:16px; position:relative; overflow:hidden;}
+  .barfill{height:100%; border-radius:4px; background:linear-gradient(90deg, #6b5323, var(--amber)); transition:width .5s ease;}
+  .rowval{font-family:'IBM Plex Mono', monospace; font-size:13px; font-weight:600; text-align:right;}
+  .rowval .unit{color:var(--ink-dim); font-weight:400; font-size:11.5px;}
+
+  /* PILLS / BADGES */
+  .pill{
+    display:inline-block; padding:2px 9px; border-radius:20px;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600;
+  }
+  .pill.yek{background:var(--gain-dim); color:var(--gain);}
+  .pill.ptf{background:#3A2E12; color:var(--amber);}
+  .pill.yes{background:var(--gain-dim); color:var(--gain);}
+  .pill.no{background:var(--loss-dim); color:var(--loss);}
+
+  /* SORTABLE DETAIL TABLE (plant list) */
+  .table-wrap{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    margin-bottom:16px; overflow-x:auto;
+  }
+  table.detail{border-collapse:collapse; width:100%; min-width:640px;}
+  table.detail thead th{
+    background:var(--panel-2);
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.3px;
+    text-transform:uppercase; color:var(--ink-dim); text-align:right;
+    padding:10px 12px; border-bottom:1px solid var(--line); cursor:pointer;
+    user-select:none; white-space:nowrap;
+  }
+  table.detail thead th:first-child{text-align:left;}
+  table.detail thead th:hover{color:var(--ink);}
+  table.detail thead th .arrow{opacity:.4; margin-left:3px;}
+  table.detail thead th.sorted .arrow{opacity:1; color:var(--amber);}
+  table.detail tbody td{
+    padding:10px 12px; font-family:'IBM Plex Mono', monospace; font-size:12.5px;
+    text-align:right; border-bottom:1px solid #1A2438; white-space:nowrap;
+  }
+  table.detail tbody td:first-child{
+    text-align:left; font-family:'Inter', sans-serif; font-weight:600; color:var(--ink);
+    white-space:normal;
+  }
+  table.detail tbody tr{cursor:pointer;}
+  table.detail tbody tr:hover{background:var(--panel-2);}
+  table.detail tbody tr:last-child td{border-bottom:none;}
+
+  /* INFO GRID (plant detail) */
+  .info-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:14px; margin-bottom:24px;
+  }
+  .info-cell{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px;
+  }
+  .info-cell .label{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:12px;
+    color:var(--ink-dim); margin-bottom:8px;
+  }
+  .info-cell .value{font-family:'IBM Plex Mono', monospace; font-size:16.5px; font-weight:600;}
+
+  /* EMPTY / ERROR / LOADING */
+  .empty-state{
+    background:var(--panel-2); border:1px dashed var(--line); border-radius:8px;
+    padding:34px 24px; text-align:center; color:var(--ink-dim); font-size:13px;
+    line-height:1.6;
+  }
+  .empty-state .icon{font-size:24px; margin-bottom:10px;}
+  .loading{
+    font-family:'IBM Plex Mono', monospace; color:var(--ink-dim); font-size:13px;
+    padding:40px 0; text-align:center;
+  }
+  .error-box{
+    background:var(--loss-dim); border:1px solid #6b2f36; border-radius:8px;
+    padding:16px 20px; color:var(--loss); font-size:13px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  /* TOOLTIP */
+  #tooltip{
+    position:fixed; display:none; z-index:50; pointer-events:none;
+    background:#050810; border:1px solid var(--line);
+    border-radius:8px; padding:12px 16px; box-shadow:0 12px 32px rgba(0,0,0,.55);
+    min-width:210px;
+  }
+  #tooltip .tt-name{
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:14px;
+    margin-bottom:8px; display:flex; align-items:center; gap:8px;
+  }
+  #tooltip .tt-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:600;
+    padding:1px 7px; border-radius:10px; background:var(--panel-2); color:var(--ink-dim);
+  }
+  #tooltip .tt-row{
+    display:flex; justify-content:space-between; gap:20px;
+    font-family:'IBM Plex Mono', monospace; font-size:12px;
+    padding:4px 0; border-top:1px solid #1A2438;
+  }
+  #tooltip .tt-row:first-of-type{border-top:none; padding-top:0;}
+  #tooltip .tt-label{color:var(--ink-dim);}
+  #tooltip .tt-val{color:var(--ink); font-weight:600;}
+
+  footer{
+    margin-top:40px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:12px; color:var(--ink-dim); font-family:'IBM Plex Mono', monospace;
+    text-align:center; line-height:1.8;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand" onclick="location.hash='#/'">
+      <div class="logo-chip">EP</div>
+      <div>
+        <div class="eyebrow" id="pageEyebrow">TÜRKİYE GENELİ</div>
+        <h1 id="pageTitle">Enerji Sektörü Panosu</h1>
+      </div>
+    </div>
+    <div class="stamp">
+      <div><span class="dot"></span>Veritabanı: <b id="dbStatus">bağlanıyor…</b></div>
+      <div id="pageSubtitle" style="margin-top:4px;">Yenilenebilir enerji şirketleri · santral bazlı izleme</div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+
+  <main id="app"><div class="loading">Yükleniyor…</div></main>
+
+  <footer>
+    Kaynak: EPİAŞ Şeffaflık Platformu + şirket Excel dosyası · finansal veriler 2Ç26 analist raporundan<br>
+    Saatlik üretim/gelir verisi EPİAŞ bağlantısı kurulunca otomatik dolacak
+  </footer>
+
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const COLOR = {
+  bg:'#0A0F1A', panel:'#111827', panel2:'#161F32', line:'#233047',
+  ink:'#E7ECF6', inkDim:'#8C9BB5', gain:'#2FD897', loss:'#FF6B6B', amber:'#E8B94F'
+};
+const MIX_COLORS = ['#E8B94F','#2FD897','#6FA8DC','#FF6B6B','#B98FD8','#C9A86A','#7A92A3'];
+
+const CHARTS_AVAILABLE = typeof Chart !== 'undefined';
+if(CHARTS_AVAILABLE){
+  Chart.defaults.font.family = "'IBM Plex Mono', monospace";
+  Chart.defaults.color = COLOR.inkDim;
+  Chart.defaults.font.size = 11;
+}else{
+  console.warn('Chart.js yüklenemedi (CDN erişilemiyor) — grafikler gösterilmeyecek, geri kalan arayüz normal çalışır.');
+}
+
+let charts = [];
+function destroyCharts(){ charts.forEach(c => c.destroy()); charts = []; }
+function drawChart(canvasId, config){
+  if(!CHARTS_AVAILABLE){
+    const box = document.getElementById(canvasId)?.closest('.chart-box');
+    if(box) box.innerHTML = '<div class="empty-state" style="height:100%;display:flex;align-items:center;justify-content:center;">Grafik kütüphanesi yüklenemedi<br>(internet/CDN erişimi gerekli)</div>';
+    return;
+  }
+  charts.push(new Chart(document.getElementById(canvasId), config));
+}
+
+function fmt(n, d=0){
+  if(n === null || n === undefined || n === '' || isNaN(n)) return '—';
+  return Number(n).toLocaleString('tr-TR', {maximumFractionDigits:d, minimumFractionDigits:d});
+}
+
+async function api(path){
+  const res = await fetch(path, {cache:'no-store'});
+  if(!res.ok){
+    const body = await res.json().catch(()=>({}));
+    throw new Error(body.error || `${path} okunamadı (HTTP ${res.status})`);
+  }
+  return res.json();
+}
+
+function el(html){
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+
+function setHeader(eyebrow, title, subtitle){
+  document.getElementById('pageEyebrow').textContent = eyebrow;
+  document.getElementById('pageTitle').textContent = title;
+  document.getElementById('pageSubtitle').textContent = subtitle;
+}
+
+function setBreadcrumb(items){
+  const nav = document.getElementById('breadcrumb');
+  nav.innerHTML = items.map((it, i) => {
+    if(i === items.length - 1) return `<span class="current">${it.label}</span>`;
+    return `<a onclick="location.hash='${it.href}'">${it.label}</a><span class="sep">/</span>`;
+  }).join('');
+}
+
+/* ---------------- Tooltip ---------------- */
+const tooltip = document.getElementById('tooltip');
+
+function showTooltip(node, evt){
+  const name = node.dataset.ttName;
+  const badge = node.dataset.ttBadge || '';
+  const rowsAttr = node.dataset.ttRows;
+  if(!name || !rowsAttr) return;
+  const rows = JSON.parse(rowsAttr);
+  tooltip.innerHTML = `
+    <div class="tt-name">${name}${badge ? `<span class="tt-badge">${badge}</span>` : ''}</div>
+    ${rows.map(r => `<div class="tt-row"><span class="tt-label">${r[0]}</span><span class="tt-val">${r[1]}</span></div>`).join('')}
+  `;
+  tooltip.style.display = 'block';
+  positionTooltip(evt);
+}
+function positionTooltip(evt){
+  const pad = 16;
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  const rect = tooltip.getBoundingClientRect();
+  const vw = window.innerWidth, vh = window.innerHeight;
+  if(x + rect.width > vw - 8) x = evt.clientX - rect.width - pad;
+  if(y + rect.height > vh - 8) y = evt.clientY - rect.height - pad;
+  if(y < 8) y = 8;
+  if(x < 8) x = 8;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+function hideTooltip(){ tooltip.style.display = 'none'; }
+
+function wireTooltips(containerEl, selector){
+  containerEl.addEventListener('mouseover', e => {
+    const node = e.target.closest(selector);
+    if(node) showTooltip(node, e);
+  });
+  containerEl.addEventListener('mousemove', e => {
+    const node = e.target.closest(selector);
+    if(node && tooltip.style.display === 'block') positionTooltip(e);
+  });
+  containerEl.addEventListener('mouseout', e => {
+    const node = e.target.closest(selector);
+    const to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest(selector) : null;
+    if(node && node !== to) hideTooltip();
+  });
+}
+
+/* ================= Görünüm 1: Türkiye geneli ================= */
+const COMPANY_SORTS = [
+  {key:'installed_capacity_mw', label:'Kurulu Güç', unit:'MW', digits:0},
+  {key:'yekdem_ratio_pct', label:'YEKDEM Oranı', unit:'%', digits:0},
+  {key:'ebitda_mtl', label:'FAVÖK', unit:'mn TL', digits:0},
+];
+let companySortKey = 'installed_capacity_mw';
+let companySearch = '';
+let homeChartTab = 'gen';
+
+function renderCompanyList(companies){
+  const spec = COMPANY_SORTS.find(s => s.key === companySortKey);
+  let list = companies.filter(c => c.code.toUpperCase().includes(companySearch.toUpperCase()));
+  list = [...list].sort((a,b) => (b[spec.key]||0) - (a[spec.key]||0));
+  const maxVal = Math.max(...list.map(c => c[spec.key]||0), 1);
+
+  document.getElementById('companyCount').textContent = `${list.length} / ${companies.length} şirket`;
+
+  const panel = document.getElementById('companyList');
+  panel.innerHTML = list.map(c => {
+    const v = c[spec.key];
+    const w = Math.min(100, Math.max(0, (v||0) / maxVal * 100));
+    const valTxt = v!=null ? `${fmt(v, spec.digits)}<span class="unit"> ${spec.unit}</span>` : '—';
+    const ttRows = JSON.stringify([
+      ['Kurulu Güç', fmt(c.installed_capacity_mw)+' MW'],
+      ['Santral Sayısı', String(c.santral_sayisi)],
+      ['YEKDEM Oranı', fmt(c.yekdem_ratio_pct,0)+'%'],
+      ['FAVÖK', c.ebitda_mtl!=null ? fmt(c.ebitda_mtl)+' mn TL' : '—'],
+    ]).replace(/"/g, '&quot;');
+    return `<div class="row" onclick="location.hash='#/company/${c.code}'"
+        data-tt-name="${c.code}" data-tt-badge="${c.santral_sayisi} santral" data-tt-rows="${ttRows}">
+      <div class="ticker">${c.code}</div>
+      <div class="barwrap"><div class="barfill" style="width:${w}%"></div></div>
+      <div class="rowval">${valTxt}</div>
+    </div>`;
+  }).join('') || `<div class="empty-state">Aramayla eşleşen şirket yok.</div>`;
+}
+
+async function renderHome(){
+  const app = document.getElementById('app');
+  app.innerHTML = '<div class="loading">Yükleniyor…</div>';
+  setHeader('TÜRKİYE GENELİ', 'Enerji Sektörü Panosu', 'Yenilenebilir enerji şirketleri · santral bazlı izleme');
+  setBreadcrumb([{label:'Türkiye Geneli'}]);
+  companySearch = '';
+
+  let companies, turkey;
+  try{
+    [companies, turkey] = await Promise.all([api('/api/companies'), api('/api/turkey/overview')]);
+  }catch(err){
+    app.innerHTML = `<div class="error-box">Veri alınamadı: ${err.message}</div>`;
+    return;
+  }
+
+  const totalCapacity = companies.reduce((s,c) => s + (c.installed_capacity_mw||0), 0);
+  const totalPlants = companies.reduce((s,c) => s + (c.santral_sayisi||0), 0);
+  const avgYekdem = companies.length
+    ? companies.reduce((s,c) => s + (c.yekdem_ratio_pct||0), 0) / companies.length
+    : 0;
+
+  app.innerHTML = `
+    <div class="method">
+      <b>Kapsam notu:</b> Aşağıdaki rakamlar EPİAŞ'ın izlediği ${companies.length} yenilenebilir enerji
+      şirketinin toplamıdır, Türkiye'nin toplam elektrik sistemi değildir. Çeyreklik üretim/tüketim/PTF
+      grafiği ise ülke genelini kapsar (kaynak: EPİAŞ + 2Ç26 analist raporu).
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">Toplam Kurulu Güç</div>
+        <div class="kpi-value">${fmt(totalCapacity)}<span class="unit">MW</span></div></div>
+      <div class="kpi"><div class="kpi-label">Şirket Sayısı</div>
+        <div class="kpi-value">${companies.length}<span class="unit">şirket</span></div></div>
+      <div class="kpi"><div class="kpi-label">Toplam Santral Sayısı</div>
+        <div class="kpi-value">${totalPlants}<span class="unit">santral</span></div></div>
+      <div class="kpi"><div class="kpi-label">Ortalama YEKDEM Oranı</div>
+        <div class="kpi-value">${fmt(avgYekdem,1)}<span class="unit">%</span></div>
+        <div class="kpi-bar"><i style="width:${Math.min(100,avgYekdem)}%"></i></div></div>
+    </div>
+
+    <div class="tabs" id="homeTabs">
+      <div class="tab ${homeChartTab==='gen'?'active':''}" data-tab="gen">Üretim / Tüketim</div>
+      <div class="tab ${homeChartTab==='ptf'?'active':''}" data-tab="ptf">Ortalama PTF</div>
+    </div>
+    <div class="col" style="margin-bottom:28px;">
+      <div class="col-head">
+        <h2 id="chartTitle">Türkiye Geneli Üretim / Tüketim</h2>
+        <div class="desc mono" id="chartDesc">ÇEYREKLİK TOPLAM · MWH</div>
+      </div>
+      <div class="chart-box"><canvas id="natChart"></canvas></div>
+    </div>
+
+    <div class="section-head"><h2>Şirketler</h2><div class="rule"></div></div>
+    <div class="toolbar">
+      <div class="filters" id="sortFilters">
+        ${COMPANY_SORTS.map(s => `<div class="filter-btn ${s.key===companySortKey?'active':''}" data-sort="${s.key}">${s.label}</div>`).join('')}
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span class="count-note" id="companyCount"></span>
+        <input type="text" class="search-box" id="companySearch" placeholder="Şirket kodu ara (ör. AKFYE)">
+      </div>
+    </div>
+    <div class="list-panel" id="companyList"></div>
+  `;
+
+  function drawHomeChart(){
+    document.getElementById('natChart').outerHTML = '<canvas id="natChart"></canvas>';
+    if(!turkey.length) return;
+    if(homeChartTab === 'gen'){
+      document.getElementById('chartTitle').textContent = 'Türkiye Geneli Üretim / Tüketim';
+      document.getElementById('chartDesc').textContent = 'ÇEYREKLİK TOPLAM · MWH';
+      drawChart('natChart', {
+        type:'bar',
+        data:{
+          labels: turkey.map(r=>r.quarter),
+          datasets:[
+            {label:'Üretim', data:turkey.map(r=>r.toplam_uretim_mwh), backgroundColor:COLOR.amber, borderRadius:3},
+            {label:'Tüketim', data:turkey.map(r=>r.toplam_tuketim_mwh), backgroundColor:COLOR.gain, borderRadius:3},
+          ]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{legend:{display:true, position:'top', align:'end', labels:{boxWidth:10,boxHeight:10,usePointStyle:true}}},
+          scales:{
+            x:{grid:{display:false}},
+            y:{grid:{color:COLOR.line}, ticks:{callback:v=>fmt(v)}}
+          }
+        }
+      });
+    }else{
+      document.getElementById('chartTitle').textContent = 'Ortalama PTF';
+      document.getElementById('chartDesc').textContent = 'ÇEYREKLİK ORTALAMA · TL/MWH';
+      drawChart('natChart', {
+        type:'line',
+        data:{
+          labels: turkey.map(r=>r.quarter),
+          datasets:[{
+            label:'PTF (TL/MWh)', data: turkey.map(r=>r.ptf_ort_try),
+            borderColor:COLOR.amber, backgroundColor:'rgba(232,185,79,0.1)',
+            fill:true, tension:0.3, pointRadius:3, borderWidth:2
+          }]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{legend:{display:false}},
+          scales:{
+            x:{grid:{display:false}},
+            y:{grid:{color:COLOR.line}, ticks:{callback:v=>fmt(v)}}
+          }
+        }
+      });
+    }
+  }
+  drawHomeChart();
+
+  document.querySelectorAll('#homeTabs .tab').forEach(t => {
+    t.addEventListener('click', () => {
+      homeChartTab = t.dataset.tab;
+      document.querySelectorAll('#homeTabs .tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      drawHomeChart();
+    });
+  });
+
+  document.querySelectorAll('#sortFilters .filter-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      companySortKey = b.dataset.sort;
+      document.querySelectorAll('#sortFilters .filter-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      renderCompanyList(companies);
+    });
+  });
+
+  document.getElementById('companySearch').addEventListener('input', e => {
+    companySearch = e.target.value.trim();
+    renderCompanyList(companies);
+  });
+
+  renderCompanyList(companies);
+  wireTooltips(document.getElementById('companyList'), '.row');
+}
+
+/* ================= Görünüm 2: Şirket detayı ================= */
+const PLANT_COLS = [
+  {key:'name', label:'Santral', type:'string'},
+  {key:'plant_type', label:'Tip', type:'string'},
+  {key:'installed_capacity_mw', label:'Kurulu Güç', type:'number'},
+  {key:'sale_type', label:'Satış Tipi', type:'string'},
+  {key:'eic_code', label:'EIC', type:'bool'},
+];
+let plantSort = {col:'installed_capacity_mw', dir:-1};
+let plantSearch = '';
+
+function plantSortValue(p, col){
+  const c = PLANT_COLS.find(x=>x.key===col);
+  const v = p[col];
+  if(c.type === 'bool') return v ? 1 : 0;
+  if(c.type === 'number') return v == null ? -Infinity : v;
+  return (v || '').toString();
+}
+
+function renderPlantTable(companyCode, plants){
+  const head = document.getElementById('plantHead');
+  head.innerHTML = PLANT_COLS.map(c =>
+    `<th data-col="${c.key}">${c.label}<span class="arrow">▲</span></th>`
+  ).join('');
+  head.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if(plantSort.col === col) plantSort.dir *= -1;
+      else { plantSort.col = col; plantSort.dir = 1; }
+      renderPlantTable(companyCode, plants);
+    });
+  });
+  head.querySelectorAll('th').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.col === plantSort.col);
+    th.querySelector('.arrow').textContent = (th.dataset.col===plantSort.col && plantSort.dir<0) ? '▼' : '▲';
+  });
+
+  let rows = plants.filter(p => p.name.toUpperCase().includes(plantSearch.toUpperCase()));
+  rows = [...rows].sort((a,b) => {
+    const av = plantSortValue(a, plantSort.col), bv = plantSortValue(b, plantSort.col);
+    if(typeof av === 'string') return av.localeCompare(bv) * plantSort.dir;
+    return (av - bv) * plantSort.dir;
+  });
+
+  document.getElementById('plantCount').textContent = `${rows.length} / ${plants.length} santral`;
+
+  const body = document.getElementById('plantBody');
+  body.innerHTML = rows.map(p => {
+    const saleBadge = p.sale_type === 'YEKDEM'
+      ? '<span class="pill yek">YEKDEM</span>'
+      : p.sale_type === 'PTF' ? '<span class="pill ptf">PTF</span>' : '—';
+    const eicBadge = p.eic_code ? '<span class="pill yes">var</span>' : '<span class="pill no">yok</span>';
+    const ttRows = JSON.stringify([
+      ['Satış Tipi', p.sale_type || '—'],
+      ['Tarife', p.tariff_usd_cents!=null ? fmt(p.tariff_usd_cents,2)+' ¢/kWh' : '—'],
+      ['Sözleşme Bitiş', p.contract_end_year || '—'],
+      ['EIC Kodu', p.eic_code || '—'],
+    ]).replace(/"/g, '&quot;');
+    return `<tr onclick="location.hash='#/plant/${p.id}'"
+        data-tt-name="${p.name}" data-tt-badge="${p.plant_type||''}" data-tt-rows="${ttRows}">
+      <td>${p.name}</td>
+      <td>${p.plant_type || '—'}</td>
+      <td>${fmt(p.installed_capacity_mw,1)} MW</td>
+      <td>${saleBadge}</td>
+      <td>${eicBadge}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function renderCompany(code){
+  const app = document.getElementById('app');
+  app.innerHTML = '<div class="loading">Yükleniyor…</div>';
+  setHeader('ŞİRKET DETAYI', code, 'Yükleniyor…');
+  setBreadcrumb([{label:'Türkiye Geneli', href:'#/'}, {label: code}]);
+  plantSearch = '';
+  plantSort = {col:'installed_capacity_mw', dir:-1};
+
+  let data;
+  try{
+    data = await api(`/api/companies/${encodeURIComponent(code)}`);
+  }catch(err){
+    app.innerHTML = `<div class="error-box">Şirket verisi alınamadı: ${err.message}</div>`;
+    return;
+  }
+
+  const c = data.company;
+  const plants = data.plants;
+  setHeader('ŞİRKET DETAYI', c.code, `${plants.length} santral · ${fmt(c.installed_capacity_mw)} MW kurulu güç`);
+
+  const mixKeys = [
+    ['ges_mw','GES'], ['res_mw','RES'], ['hes_mw','HES'],
+    ['bes_mw','BES'], ['jes_mw','JES'], ['dogalgaz_mw','Doğalgaz'], ['termik_mw','Termik']
+  ].filter(([k]) => c[k] != null && c[k] > 0);
+
+  app.innerHTML = `
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">Kurulu Güç</div>
+        <div class="kpi-value">${fmt(c.installed_capacity_mw)}<span class="unit">MW</span></div></div>
+      <div class="kpi"><div class="kpi-label">YEKDEM Oranı</div>
+        <div class="kpi-value">${fmt(c.yekdem_ratio_pct,0)}<span class="unit">%</span></div>
+        <div class="kpi-bar"><i style="width:${Math.min(100,c.yekdem_ratio_pct||0)}%"></i></div></div>
+      <div class="kpi"><div class="kpi-label">FAVÖK</div>
+        <div class="kpi-value">${c.ebitda_mtl!=null ? fmt(c.ebitda_mtl) : '—'}<span class="unit">mn TL</span></div></div>
+      <div class="kpi"><div class="kpi-label">Net Borç</div>
+        <div class="kpi-value">${c.net_debt_mtl!=null ? fmt(c.net_debt_mtl) : '—'}<span class="unit">mn TL</span></div></div>
+    </div>
+
+    <div class="method">
+      <b>Veri notu:</b> Finansal alanlar 17.07.2026 tarihli 2Ç26 analist raporundan; santral listesi
+      şirket Excel dosyasından yüklendi. "EIC" kolonu <span class="pill no" style="vertical-align:middle;">yok</span>
+      olan santraller henüz EPİAŞ ile eşleştirilmedi, üretim verisi çekilemiyor.
+    </div>
+
+    ${mixKeys.length ? `
+    <div class="col" style="margin-bottom:28px;">
+      <div class="col-head">
+        <h2>Kapasite Kırılımı</h2>
+        <div class="desc mono">KAYNAK TİPİNE GÖRE · MW</div>
+      </div>
+      <div class="chart-box small"><canvas id="mixChart"></canvas></div>
+    </div>` : ''}
+
+    <div class="section-head"><h2>Santraller</h2><div class="rule"></div></div>
+    ${plants.length ? `
+    <div class="toolbar">
+      <input type="text" class="search-box" id="plantSearch" placeholder="Santral adı ara">
+      <span class="count-note" id="plantCount"></span>
+    </div>
+    <div class="table-wrap">
+      <table class="detail" id="plantTable">
+        <thead><tr id="plantHead"></tr></thead>
+        <tbody id="plantBody"></tbody>
+      </table>
+    </div>` : `
+    <div class="empty-state">
+      <div class="icon">🏗️</div>
+      Bu şirket için henüz santral verisi yok — Excel'de eksik/ayrı sekmede,<br>EPİAŞ ile tamamlanacak.
+    </div>`}
+  `;
+
+  if(mixKeys.length){
+    drawChart('mixChart', {
+      type:'doughnut',
+      data:{
+        labels: mixKeys.map(([,label]) => label),
+        datasets:[{ data: mixKeys.map(([k]) => c[k]), backgroundColor: MIX_COLORS, borderColor: COLOR.panel, borderWidth:2 }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false, cutout:'62%',
+        plugins:{ legend:{ position:'right', labels:{boxWidth:9,boxHeight:9,usePointStyle:true,padding:10,font:{size:11}} } }
+      }
+    });
+  }
+
+  if(plants.length){
+    renderPlantTable(c.code, plants);
+    document.getElementById('plantSearch').addEventListener('input', e => {
+      plantSearch = e.target.value.trim();
+      renderPlantTable(c.code, plants);
+    });
+    wireTooltips(document.getElementById('plantBody'), 'tr');
+  }
+}
+
+/* ================= Görünüm 3: Santral detayı ================= */
+let plantPeriodTab = 'gun';
+let plantProdRows = [];
+
+function aggregateProduction(rows, granularity){
+  if(granularity === 'gun'){
+    return rows.map(r => ({label: r.gun.slice(5), mwh: r.toplam_uretim_mwh||0, revenue: r.tahmini_gelir_usd||0}));
+  }
+  const buckets = new Map();
+  rows.forEach(r => {
+    let key;
+    if(granularity === 'ay'){
+      key = r.gun.slice(0,7);
+    }else{
+      const [y,m] = r.gun.split('-');
+      key = `${y} Ç${Math.floor((parseInt(m,10)-1)/3)+1}`;
+    }
+    const b = buckets.get(key) || {mwh:0, revenue:0};
+    b.mwh += r.toplam_uretim_mwh||0;
+    b.revenue += r.tahmini_gelir_usd||0;
+    buckets.set(key, b);
+  });
+  return [...buckets.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([label,v]) => ({label, mwh:v.mwh, revenue:v.revenue}));
+}
+
+function drawPlantCharts(){
+  const agg = aggregateProduction(plantProdRows, plantPeriodTab);
+  drawChart('prodChart', {
+    type:'bar',
+    data:{labels: agg.map(a=>a.label), datasets:[{label:'Üretim', data: agg.map(a=>a.mwh), backgroundColor:COLOR.amber, borderRadius:3}]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false}, ticks:{maxTicksLimit:10}}, y:{grid:{color:COLOR.line}, ticks:{callback:v=>fmt(v)}}}
+    }
+  });
+  drawChart('revChart', {
+    type:'bar',
+    data:{labels: agg.map(a=>a.label), datasets:[{label:'Gelir', data: agg.map(a=>a.revenue), backgroundColor:COLOR.gain, borderRadius:3}]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false}, ticks:{maxTicksLimit:10}}, y:{grid:{color:COLOR.line}, ticks:{callback:v=>fmt(v)}}}
+    }
+  });
+}
+
+async function renderPlant(id){
+  const app = document.getElementById('app');
+  app.innerHTML = '<div class="loading">Yükleniyor…</div>';
+  setHeader('SANTRAL DETAYI', '…', 'Yükleniyor…');
+  setBreadcrumb([{label:'Türkiye Geneli', href:'#/'}, {label:'…'}]);
+
+  let data;
+  try{
+    data = await api(`/api/plants/${encodeURIComponent(id)}`);
+  }catch(err){
+    app.innerHTML = `<div class="error-box">Santral verisi alınamadı: ${err.message}</div>`;
+    return;
+  }
+
+  const p = data.plant, c = data.company;
+  setHeader('SANTRAL DETAYI', p.name, `${c ? c.code : p.company_code} · ${p.plant_type || 'tip bilinmiyor'}`);
+  setBreadcrumb([
+    {label:'Türkiye Geneli', href:'#/'},
+    {label: c ? c.code : p.company_code, href: `#/company/${p.company_code}`},
+    {label: p.name}
+  ]);
+
+  const saleLabel = p.sale_type === 'YEKDEM'
+    ? `YEKDEM${p.tariff_usd_cents!=null ? ' · ' + fmt(p.tariff_usd_cents,2) + ' ¢/kWh' : ''}`
+    : p.sale_type === 'PTF' ? 'PTF (piyasa fiyatı)' : '—';
+
+  // Son 120 günü çek (UEVM'de ~6 hafta yayın gecikmesi olduğu için dar bir
+  // aralık çoğu YEKDEM santralinde boş görünebilir — geniş pencere bunu tolere eder)
+  const today = new Date();
+  const start = new Date(today); start.setDate(start.getDate() - 120);
+  const toStr = d => d.toISOString().slice(0,10);
+  let hasProdData = false;
+  try{
+    const prodResp = await api(`/api/production?plant_id=${id}&start=${toStr(start)}&end=${toStr(today)}`);
+    plantProdRows = (prodResp.data || []).filter(r => r.toplam_uretim_mwh != null);
+    hasProdData = plantProdRows.some(r => (r.toplam_uretim_mwh||0) > 0);
+  }catch(err){
+    plantProdRows = [];
+  }
+
+  let capacityFactorHtml = '—';
+  if(hasProdData && p.installed_capacity_mw){
+    const totalMwh = plantProdRows.reduce((s,r)=>s+(r.toplam_uretim_mwh||0),0);
+    const cf = totalMwh / (p.installed_capacity_mw * 24 * plantProdRows.length) * 100;
+    capacityFactorHtml = `${fmt(cf,1)}%`;
+  }
+
+  app.innerHTML = `
+    <div class="info-grid">
+      <div class="info-cell"><div class="label">Kurulu Güç</div><div class="value">${fmt(p.installed_capacity_mw,1)} MW</div></div>
+      <div class="info-cell"><div class="label">Santral Tipi</div><div class="value">${p.plant_type || '—'}</div></div>
+      <div class="info-cell"><div class="label">Satış Tipi</div><div class="value">${saleLabel}</div></div>
+      <div class="info-cell"><div class="label">Sözleşme Bitiş Yılı</div><div class="value">${p.contract_end_year || '—'}</div></div>
+      <div class="info-cell"><div class="label">EIC Kodu</div><div class="value" style="font-size:13px;">${p.eic_code || '—'}</div></div>
+      <div class="info-cell"><div class="label">Kapasite Kullanım Oranı</div><div class="value">${capacityFactorHtml}</div></div>
+    </div>
+
+    <div class="tabs" id="plantTabs">
+      <div class="tab ${plantPeriodTab==='gun'?'active':''}" data-period="gun">Günlük</div>
+      <div class="tab ${plantPeriodTab==='ay'?'active':''}" data-period="ay">Aylık</div>
+      <div class="tab ${plantPeriodTab==='ceyrek'?'active':''}" data-period="ceyrek">Çeyreklik</div>
+    </div>
+
+    ${hasProdData ? `
+    <div class="panel-row">
+      <div class="col">
+        <div class="col-head"><h2>Üretim</h2><div class="desc mono">MWH</div></div>
+        <div class="chart-box small"><canvas id="prodChart"></canvas></div>
+      </div>
+      <div class="col">
+        <div class="col-head"><h2>Üretimden Elde Edilen Gelir</h2><div class="desc mono">${p.sale_type === 'YEKDEM' ? 'YEKDEM TARİFESİ' : 'PTF'} · USD</div></div>
+        <div class="chart-box small"><canvas id="revChart"></canvas></div>
+      </div>
+    </div>` : `
+    <div class="panel-row">
+      <div class="col">
+        <div class="col-head"><h2>Üretim</h2><div class="desc mono">MWH</div></div>
+        <div class="empty-state">
+          <div class="icon">📡</div>
+          Bu santral için henüz üretim verisi yok.<br>EIC/UEVÇB eşleşmesi tamamlanınca veya EPİAŞ yayınladıkça burada görünecek.
+        </div>
+      </div>
+      <div class="col">
+        <div class="col-head"><h2>Üretimden Elde Edilen Gelir</h2><div class="desc mono">YEKDEM/PTF</div></div>
+        <div class="empty-state">
+          <div class="icon">💰</div>
+          Henüz gelir verisi yok.
+        </div>
+      </div>
+    </div>`}
+  `;
+
+  if(hasProdData) drawPlantCharts();
+
+  document.querySelectorAll('#plantTabs .tab').forEach(t => {
+    t.addEventListener('click', () => {
+      plantPeriodTab = t.dataset.period;
+      document.querySelectorAll('#plantTabs .tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      if(hasProdData) drawPlantCharts();
+    });
+  });
+}
+
+/* ================= Yönlendirici (hash router) ================= */
+function router(){
+  destroyCharts();
+  hideTooltip();
+  const hash = location.hash || '#/';
+  const companyMatch = hash.match(/^#\/company\/([^/]+)$/);
+  const plantMatch = hash.match(/^#\/plant\/(\d+)$/);
+
+  if(companyMatch){
+    renderCompany(decodeURIComponent(companyMatch[1]));
+  }else if(plantMatch){
+    renderPlant(plantMatch[1]);
+  }else{
+    renderHome();
+  }
+}
+
+window.addEventListener('hashchange', router);
+
+api('/api/health').then(h => {
+  document.getElementById('dbStatus').textContent = `${h.aktif_santral} santral aktif`;
+}).catch(() => {
+  document.getElementById('dbStatus').textContent = 'API\'ye bağlanılamadı';
+});
+
+router();
+</script>
+</body>
+</html>

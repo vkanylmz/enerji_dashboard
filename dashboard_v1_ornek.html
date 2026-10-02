@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enerji Piyasası Panosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg: #10141a;
+    --panel: #171d26;
+    --panel-border: #262f3c;
+    --ink: #eef1f5;
+    --ink-dim: #8b95a5;
+    --amber: #e0a458;
+    --teal: #4fb8ad;
+    --coral: #e2725b;
+    --violet: #8b8fe8;
+    --grid-line: #232b37;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 500px at 85% -10%, rgba(224,164,88,0.07), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1320px;margin:0 auto;padding:36px 28px 64px;}
+
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:16px;
+    margin-bottom:32px;
+    padding-bottom:24px;
+    border-bottom:1px solid var(--panel-border);
+  }
+  .brand{display:flex; align-items:baseline; gap:14px;}
+  .brand .mark{
+    width:38px;height:38px;border-radius:9px;
+    background:linear-gradient(135deg, var(--amber), var(--coral));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; color:#171008;
+    flex-shrink:0;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:26px;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{color:var(--ink-dim); font-size:14px; margin-top:4px;}
+  .status{
+    text-align:right;
+    font-size:13px;
+    color:var(--ink-dim);
+  }
+  .status .dot{
+    display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:var(--teal); margin-right:6px;
+    box-shadow:0 0 0 3px rgba(79,184,173,0.18);
+  }
+  .status strong{color:var(--ink); font-weight:600;}
+
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:14px;
+    margin-bottom:24px;
+  }
+  .kpi{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:12px;
+    padding:18px 18px 16px;
+  }
+  .kpi .label{font-size:12.5px; color:var(--ink-dim); margin-bottom:10px;}
+  .kpi .value{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:26px; font-weight:600; letter-spacing:-0.01em;
+  }
+  .kpi .unit{font-size:13px; color:var(--ink-dim); font-weight:400; margin-left:4px;}
+  .kpi .delta{font-size:12.5px; margin-top:8px;}
+  .delta.up{color:var(--coral);}
+  .delta.down{color:var(--teal);}
+
+  .grid2{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:14px;
+    margin-bottom:14px;
+  }
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:12px;
+    padding:20px 22px 12px;
+  }
+  .panel h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:15px; font-weight:600; margin:0 0 2px;
+  }
+  .panel .desc{font-size:12.5px; color:var(--ink-dim); margin-bottom:14px;}
+  .chart-box{position:relative; height:260px;}
+  .chart-box.tall{height:300px;}
+
+  .legend-row{
+    display:flex; gap:18px; flex-wrap:wrap;
+    margin-top:10px; font-size:12.5px; color:var(--ink-dim);
+  }
+  .legend-row span{display:inline-flex; align-items:center; gap:6px;}
+  .legend-row i{width:9px;height:9px;border-radius:2px; display:inline-block;}
+
+  footer{
+    margin-top:28px;
+    padding-top:18px;
+    border-top:1px solid var(--panel-border);
+    font-size:12.5px;
+    color:var(--ink-dim);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+  footer a{color:var(--amber); text-decoration:none;}
+
+  .empty-note{
+    background:var(--panel); border:1px dashed var(--panel-border); border-radius:12px;
+    padding:16px 20px; font-size:13px; color:var(--ink-dim); margin-bottom:20px;
+  }
+
+  @media (max-width: 980px){
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+    .grid2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="mark">EP</div>
+      <div>
+        <h1>Enerji Piyasası Panosu</h1>
+        <div class="subtitle">EPİAŞ Şeffaflık Platformu · Günlük fiyat, üretim ve tüketim özeti</div>
+      </div>
+    </div>
+    <div class="status">
+      <div><span class="dot"></span>Veri tarihi: <strong id="dataDate">—</strong></div>
+      <div style="margin-top:4px;">Son güncelleme: <span id="updatedAt">—</span></div>
+    </div>
+  </header>
+
+  <div id="emptyNote" class="empty-note" style="display:none;"></div>
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Saatlik PTF / SMF</h2>
+      <div class="desc">Piyasa Takas Fiyatı ve Sistem Marjinal Fiyatı — seçilen gün, TL/MWh</div>
+      <div class="chart-box"><canvas id="priceChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Üretim Kaynak Dağılımı</h2>
+      <div class="desc">Kaynak bazlı toplam üretim — seçilen gün, MWh</div>
+      <div class="chart-box"><canvas id="mixChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Saatlik Tüketim</h2>
+      <div class="desc">Gerçek zamanlı sistem tüketimi — seçilen gün, MWh</div>
+      <div class="chart-box"><canvas id="consChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>30 Günlük PTF Trendi</h2>
+      <div class="desc">Günlük ortalama Piyasa Takas Fiyatı, TL/MWh</div>
+      <div class="chart-box"><canvas id="trendChart"></canvas></div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Kaynak: EPİAŞ Şeffaflık Platformu (seffaflik.epias.com.tr) · Veriler <code>fetch_epias_data.py</code> ile günlük çekilir</span>
+    <span>Dashboard yerelde çalışır — canlı veri için data/data.json güncel tutulmalı</span>
+  </footer>
+
+</div>
+
+<script>
+const PALETTE = {
+  amber:'#e0a458', teal:'#4fb8ad', coral:'#e2725b', violet:'#8b8fe8',
+  ink:'#eef1f5', inkDim:'#8b95a5', grid:'#232b37'
+};
+const MIX_COLORS = ['#e0a458','#4fb8ad','#8b8fe8','#e2725b','#6fa8dc','#c9a86a','#5fb88f','#b98fd8','#d88f5a','#7a92a3'];
+
+Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+Chart.defaults.color = PALETTE.inkDim;
+Chart.defaults.font.size = 11.5;
+
+function fmt(n, d=0){
+  if(n === null || n === undefined || isNaN(n)) return '—';
+  return Number(n).toLocaleString('tr-TR', {maximumFractionDigits:d, minimumFractionDigits:d});
+}
+
+function kpiCard(label, value, unit, deltaText, deltaDir){
+  const delta = deltaText ? `<div class="delta ${deltaDir}">${deltaText}</div>` : '';
+  return `<div class="kpi">
+    <div class="label">${label}</div>
+    <div class="value">${value}<span class="unit">${unit}</span></div>
+    ${delta}
+  </div>`;
+}
+
+function renderKPIs(data){
+  const g = document.getElementById('kpiGrid');
+  const gecmis = data.gecmis || [];
+  const prev = gecmis.length > 1 ? gecmis[gecmis.length - 2] : null;
+
+  function delta(curr, prevVal){
+    if(curr === null || prevVal === null || prevVal === undefined || prevVal === '') return {text:'', dir:''};
+    const p = parseFloat(prevVal);
+    if(!p) return {text:'', dir:''};
+    const pct = ((curr - p) / p) * 100;
+    const dir = pct >= 0 ? 'up' : 'down';
+    const arrow = pct >= 0 ? '▲' : '▼';
+    return {text:`${arrow} %${Math.abs(pct).toFixed(1)} önceki güne göre`, dir};
+  }
+
+  const ptfDelta = prev ? delta(data.ptf.ortalama, prev.ortalama_ptf) : {text:'',dir:''};
+  const smfDelta = prev ? delta(data.smf.ortalama, prev.ortalama_smf) : {text:'',dir:''};
+  const consDelta = prev ? delta(data.tuketim.toplam_mwh, prev.toplam_tuketim_mwh) : {text:'',dir:''};
+  const genDelta = prev ? delta(data.uretim.toplam_mwh, prev.toplam_uretim_mwh) : {text:'',dir:''};
+
+  g.innerHTML = [
+    kpiCard('Ortalama PTF', fmt(data.ptf.ortalama), 'TL/MWh', ptfDelta.text, ptfDelta.dir),
+    kpiCard('Ortalama SMF', fmt(data.smf.ortalama), 'TL/MWh', smfDelta.text, smfDelta.dir),
+    kpiCard('Toplam Tüketim', fmt(data.tuketim.toplam_mwh), 'MWh', consDelta.text, consDelta.dir),
+    kpiCard('Toplam Üretim', fmt(data.uretim.toplam_mwh), 'MWh', genDelta.text, genDelta.dir),
+    kpiCard('Yenilenebilir Pay', fmt(data.uretim.yenilenebilir_pay_yuzde, 1), '%', '', ''),
+  ].join('');
+}
+
+function renderPriceChart(data){
+  const labels = (data.ptf.saatlik || []).map(r => r.saat);
+  new Chart(document.getElementById('priceChart'), {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'PTF', data:(data.ptf.saatlik||[]).map(r=>r.ptf),
+          borderColor:PALETTE.amber, backgroundColor:'rgba(224,164,88,0.08)',
+          fill:true, tension:0.35, pointRadius:0, borderWidth:2
+        },
+        {
+          label:'SMF', data:(data.smf.saatlik||[]).map(r=>r.smf),
+          borderColor:PALETTE.violet, backgroundColor:'transparent',
+          fill:false, tension:0.35, pointRadius:0, borderWidth:2, borderDash:[4,3]
+        }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index', intersect:false},
+      plugins:{legend:{display:true, position:'top', align:'end', labels:{boxWidth:10, boxHeight:10, usePointStyle:true}}},
+      scales:{
+        x:{grid:{color:PALETTE.grid}, ticks:{maxTicksLimit:8}},
+        y:{grid:{color:PALETTE.grid}, ticks:{callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+function renderMixChart(data){
+  const mix = data.uretim.kaynak_dagilimi || {};
+  const entries = Object.entries(mix).sort((a,b)=>b[1]-a[1]);
+  new Chart(document.getElementById('mixChart'), {
+    type:'doughnut',
+    data:{
+      labels:entries.map(e=>e[0]),
+      datasets:[{
+        data:entries.map(e=>e[1]),
+        backgroundColor:MIX_COLORS,
+        borderColor:PALETTE.panel || '#171d26',
+        borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      cutout:'62%',
+      plugins:{
+        legend:{
+          position:'right', labels:{boxWidth:9, boxHeight:9, usePointStyle:true, padding:10, font:{size:11}}
+        }
+      }
+    }
+  });
+}
+
+function renderConsChart(data){
+  const labels = (data.tuketim.saatlik || []).map(r => r.saat);
+  new Chart(document.getElementById('consChart'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label:'Tüketim', data:(data.tuketim.saatlik||[]).map(r=>r.tuketim),
+        backgroundColor:'rgba(79,184,173,0.55)', borderRadius:3, maxBarThickness:14
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false}, ticks:{maxTicksLimit:8}},
+        y:{grid:{color:PALETTE.grid}, ticks:{callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+function renderTrendChart(data){
+  const gecmis = data.gecmis || [];
+  new Chart(document.getElementById('trendChart'), {
+    type:'line',
+    data:{
+      labels:gecmis.map(r=>r.tarih.slice(5)),
+      datasets:[{
+        label:'Ort. PTF', data:gecmis.map(r=>parseFloat(r.ortalama_ptf)),
+        borderColor:PALETTE.amber, backgroundColor:'rgba(224,164,88,0.08)',
+        fill:true, tension:0.3, pointRadius:0, borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false}, ticks:{maxTicksLimit:8}},
+        y:{grid:{color:PALETTE.grid}, ticks:{callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+async function init(){
+  let data;
+  try{
+    const res = await fetch('data/data.json', {cache:'no-store'});
+    if(!res.ok) throw new Error('data.json okunamadı');
+    data = await res.json();
+  }catch(err){
+    document.getElementById('emptyNote').style.display = 'block';
+    document.getElementById('emptyNote').textContent =
+      'data/data.json bulunamadı veya okunamadı. Önce "python fetch_epias_data.py" çalıştırın ' +
+      've bu sayfayı bir yerel sunucu üzerinden açın (bkz. README.md — dosya:// üzerinden fetch() çalışmaz).';
+    return;
+  }
+
+  document.getElementById('dataDate').textContent = data.tarih || '—';
+  document.getElementById('updatedAt').textContent = data.guncelleme_zamani
+    ? new Date(data.guncelleme_zamani).toLocaleString('tr-TR')
+    : '—';
+
+  renderKPIs(data);
+  renderPriceChart(data);
+  renderMixChart(data);
+  renderConsChart(data);
+  renderTrendChart(data);
+}
+
+init();
+</script>
+</body>
+</html>
